@@ -37,10 +37,12 @@ jobs:
           Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v2
+        id: upload-release-asset
+        uses: sekwah41/upload-release-assets@v1.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
           asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+          asset_content_type: application/zip
