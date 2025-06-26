@@ -5,3 +5,5 @@
 /HttpClientCurlVisualizer/obj/project.assets.json
 /HttpClientCurlVisualizer/obj/HttpClientCurlVisualizer.csproj.nuget.dgspec.json
 /HttpClientCurlVisualizer/obj/Debug
+/HttpClientCurlVisualizer/bin/Release
+/HttpClientCurlVisualizer/obj/Release
