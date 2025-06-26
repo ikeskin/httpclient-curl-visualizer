@@ -1,12 +1,12 @@
-name: Build HttpClient Curl Visualizer
+name: Build and Release HttpClient Curl Visualizer
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   release:
-    types: [ published ]
+    types: [published]  # Sadece "published" release'lerde tetikle
 
 jobs:
   build:
@@ -61,30 +61,28 @@ jobs:
         path: installation-package/
 
   release:
-    needs: build
+    needs: build  # Build job'ının bitmesini bekle
     runs-on: windows-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
     permissions:
-      contents: write
-    
+      contents: write  # Release asset yüklemek için izin
     steps:
-    - name: Download Installation Package
-      uses: actions/download-artifact@v4
-      with:
-        name: Installation-Package
-        path: release-files/
-        
-    - name: Create ZIP package
-      run: |
-        cd release-files
-        powershell Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        asset_content_type: application/zip
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Installation-Package
+          path: release-files/
+
+      - name: Create ZIP
+        run: |
+          cd release-files
+          Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+
+      - name: Upload Release Asset
+        uses: tanyagray/action-upload-release-asset@v1.1.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+          asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+          asset_content_type: application/zip
