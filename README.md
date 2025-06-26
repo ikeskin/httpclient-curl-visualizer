@@ -15,7 +15,7 @@ Visual Studio 2022 için HttpClient response'larını curl komutuna çeviren öz
 
 ### Otomatik Kurulum
 
-1. [Releases](https://github.com/yourusername/httpclient-curl-visualizer/releases) sayfasından en son sürümü indirin
+1. [Releases](https://github.com/ikeskin/httpclient-curl-visualizer/releases) sayfasından en son sürümü indirin
 2. ZIP dosyasını çıkarın
 3. `HttpClientCurlVisualizer.dll` dosyasını şu konuma kopyalayın:
    ```
@@ -27,7 +27,7 @@ Visual Studio 2022 için HttpClient response'larını curl komutuna çeviren öz
 
 ```bash
 # Repository'yi klonlayın
-git clone https://github.com/yourusername/httpclient-curl-visualizer.git
+git clone https://github.com/ikeskin/httpclient-curl-visualizer.git
 cd httpclient-curl-visualizer
 
 # Projeyi derleyin
@@ -86,7 +86,7 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 ## 🐛 Sorun Bildirimi
 
-Herhangi bir sorunla karşılaştığınızda [Issues](https://github.com/yourusername/httpclient-curl-visualizer/issues) sayfasından bildirebilirsiniz.
+Herhangi bir sorunla karşılaştığınızda [Issues](https://github.com/ikeskin/httpclient-curl-visualizer/issues) sayfasından bildirebilirsiniz.
 
 ## 📝 Notlar
 
