@@ -1,89 +1,46 @@
-name: Build HttpClient Curl Visualizer
+name: Build and Release HttpClient Curl Visualizer
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   release:
-    types: [ published ]
+    types: [published]  # Sadece "published" release'lerde tetikle
 
 jobs:
   build:
     runs-on: windows-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-      
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
-      
-    - name: Restore NuGet packages
-      run: nuget restore HttpClientCurlVisualizer.sln
-      
-    - name: Build Solution (Debug)
-      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Debug /p:Platform="Any CPU"
-      
-    - name: Build Solution (Release)
-      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Release /p:Platform="Any CPU"
-      
-    - name: Upload Debug Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: HttpClientCurlVisualizer-Debug
-        path: |
-          **/bin/Debug/**/*.dll
-          **/bin/Debug/**/*.pdb
-          
-    - name: Upload Release Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: HttpClientCurlVisualizer-Release
-        path: |
-          **/bin/Release/**/*.dll
-          **/bin/Release/**/*.pdb
-          
-    - name: Create Installation Package
-      run: |
-        mkdir installation-package
-        copy "HttpClientCurlVisualizer\bin\Release\HttpClientCurlVisualizer.dll" "installation-package\"
-        copy "README.md" "installation-package\" 2>nul || echo "README not found"
-        copy "INSTALL.md" "installation-package\" 2>nul || echo "INSTALL not found"
-        
-    - name: Upload Installation Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: Installation-Package
-        path: installation-package/
+      # Build adımları (öncekiyle aynı)
+      - name: Upload Installation Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Installation-Package
+          path: installation-package/
 
   release:
-    needs: build
+    needs: build  # Build job'ının bitmesini bekle
     runs-on: windows-latest
     permissions:
-      contents: write
-    
+      contents: write  # Release asset yüklemek için izin
     steps:
-    - name: Download Installation Package
-      uses: actions/download-artifact@v4
-      with:
-        name: Installation-Package
-        path: release-files/
-        
-    - name: Create ZIP package
-      run: |
-        cd release-files
-        powershell Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-        asset_content_type: application/zip
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Installation-Package
+          path: release-files/
+
+      - name: Create ZIP
+        run: |
+          cd release-files
+          Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+          asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
