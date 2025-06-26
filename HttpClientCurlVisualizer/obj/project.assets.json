@@ -1,0 +1,102 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "Microsoft.VisualStudio.DebuggerVisualizers/17.0.1061105": {
+        "type": "package",
+        "compile": {
+          "ref/net2.0/Microsoft.VisualStudio.DebuggerVisualizers.dll": {
+            "related": ".xml"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.VisualStudio.DebuggerVisualizers/17.0.1061105": {
+      "sha512": "6IJs443qet1Tm2ox+WFNBAf8yuKmjHrK3lnY2Mf6FO98d6xsZ2GGjHLLIlw7NT8lm0gbvkJxnCr84VNUk9XRuA==",
+      "type": "package",
+      "path": "microsoft.visualstudio.debuggervisualizers/17.0.1061105",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "microsoft.visualstudio.debuggervisualizers.17.0.1061105.nupkg.sha512",
+        "microsoft.visualstudio.debuggervisualizers.nuspec",
+        "ref/net2.0/Microsoft.VisualStudio.DebuggerVisualizers.dll",
+        "ref/net2.0/Microsoft.VisualStudio.DebuggerVisualizers.xml",
+        "ref/netstandard2.0/Microsoft.VisualStudio.DebuggerVisualizers.dll",
+        "ref/netstandard2.0/Microsoft.VisualStudio.DebuggerVisualizers.xml"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "Microsoft.VisualStudio.DebuggerVisualizers >= 17.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\ikesk\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\HttpClientCurlVisualizer.csproj",
+      "projectName": "HttpClientCurlVisualizer",
+      "projectPath": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\HttpClientCurlVisualizer.csproj",
+      "packagesPath": "C:\\Users\\ikesk\\.nuget\\packages\\",
+      "outputPath": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "UsingMicrosoftNETSdk": false,
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\ikesk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {}
+        }
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net472": {
+        "dependencies": {
+          "Microsoft.VisualStudio.DebuggerVisualizers": {
+            "suppressParent": "All",
+            "target": "Package",
+            "version": "[17.0.0, )"
+          }
+        }
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "HttpClientCurlVisualizer depends on Microsoft.VisualStudio.DebuggerVisualizers (>= 17.0.0) but Microsoft.VisualStudio.DebuggerVisualizers 17.0.0 was not found. Microsoft.VisualStudio.DebuggerVisualizers 17.0.1061105 was resolved instead.",
+      "libraryId": "Microsoft.VisualStudio.DebuggerVisualizers",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.7.2"
+      ]
+    }
+  ]
+}

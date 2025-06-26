@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "dgSpecHash": "vyET7T04syI=",
+  "success": true,
+  "projectFilePath": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\HttpClientCurlVisualizer.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ikesk\\.nuget\\packages\\microsoft.visualstudio.debuggervisualizers\\17.0.1061105\\microsoft.visualstudio.debuggervisualizers.17.0.1061105.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "HttpClientCurlVisualizer depends on Microsoft.VisualStudio.DebuggerVisualizers (>= 17.0.0) but Microsoft.VisualStudio.DebuggerVisualizers 17.0.0 was not found. Microsoft.VisualStudio.DebuggerVisualizers 17.0.1061105 was resolved instead.",
+      "projectPath": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\HttpClientCurlVisualizer.csproj",
+      "warningLevel": 1,
+      "filePath": "I:\\source\\httpclient-curl-visualizer\\HttpClientCurlVisualizer\\HttpClientCurlVisualizer.csproj",
+      "libraryId": "Microsoft.VisualStudio.DebuggerVisualizers",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.7.2"
+      ]
+    }
+  ]
+}
