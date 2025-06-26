@@ -11,13 +11,54 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    
     steps:
-      # Build adımları (öncekiyle aynı)
-      - name: Upload Installation Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: Installation-Package
-          path: installation-package/
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+      
+    - name: Restore NuGet packages
+      run: nuget restore HttpClientCurlVisualizer.sln
+      
+    - name: Build Solution (Debug)
+      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Debug /p:Platform="Any CPU"
+      
+    - name: Build Solution (Release)
+      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Release /p:Platform="Any CPU"
+      
+    - name: Upload Debug Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: HttpClientCurlVisualizer-Debug
+        path: |
+          **/bin/Debug/**/*.dll
+          **/bin/Debug/**/*.pdb
+          
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: HttpClientCurlVisualizer-Release
+        path: |
+          **/bin/Release/**/*.dll
+          **/bin/Release/**/*.pdb
+          
+    - name: Create Installation Package
+      run: |
+        mkdir installation-package
+        copy "HttpClientCurlVisualizer\bin\Release\HttpClientCurlVisualizer.dll" "installation-package\"
+        copy "README.md" "installation-package\" 2>nul || echo "README not found"
+        copy "INSTALL.md" "installation-package\" 2>nul || echo "INSTALL not found"
+        
+    - name: Upload Installation Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: Installation-Package
+        path: installation-package/
 
   release:
     needs: build  # Build job'ının bitmesini bekle
