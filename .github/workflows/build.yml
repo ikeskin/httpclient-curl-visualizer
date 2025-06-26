@@ -63,7 +63,6 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
     permissions:
       contents: write
     
