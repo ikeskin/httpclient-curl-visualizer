@@ -63,7 +63,9 @@ jobs:
   release:
     needs: build
     runs-on: windows-latest
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && github.event.action == 'published'
+    permissions:
+      contents: write
     
     steps:
     - name: Download Installation Package
@@ -78,7 +80,7 @@ jobs:
         powershell Compress-Archive -Path * -DestinationPath HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
         
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
+      uses: actions/upload-release-asset@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
