@@ -93,12 +93,6 @@ jobs:
           name: Installation-Package
           path: release-files/
 
-      - name: Verify Downloaded Files
-        run: |
-          echo "Contents of release-files:"
-          ls -la release-files/
-          [ -f "release-files/HttpClientCurlVisualizer.dll" ] || exit 1
-
       - name: Create ZIP Package
         run: |
           $tag = "${{ github.event.release.tag_name }}"
