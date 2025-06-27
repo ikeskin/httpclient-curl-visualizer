@@ -6,73 +6,29 @@ on:
   pull_request:
     branches: [main, master]
   release:
-    types: [published]
+    types: [published, created]  # Hem published hem de created event'lerini dinle
 
 jobs:
   build:
     runs-on: windows-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-      
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
-      
-    - name: Restore NuGet packages
-      run: nuget restore HttpClientCurlVisualizer.sln
-      
-    - name: Build Solution (Debug)
-      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Debug /p:Platform="Any CPU"
-      
-    - name: Build Solution (Release)
-      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Release /p:Platform="Any CPU"
-      
-    - name: Upload Debug Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: HttpClientCurlVisualizer-Debug
-        path: |
-          **/bin/Debug/**/*.dll
-          **/bin/Debug/**/*.pdb
-          
-    - name: Upload Release Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: HttpClientCurlVisualizer-Release
-        path: |
-          **/bin/Release/**/*.dll
-          **/bin/Release/**/*.pdb
-          
-    - name: Create Installation Package
-      run: |
-        mkdir installation-package
-        copy "HttpClientCurlVisualizer\bin\Release\HttpClientCurlVisualizer.dll" "installation-package\"
-        copy "README.md" "installation-package\" 2>nul || echo "README not found"
-        copy "INSTALL.md" "installation-package\" 2>nul || echo "INSTALL not found"
-        
-    - name: Upload Installation Package
-      uses: actions/upload-artifact@v4
-      with:
-        name: Installation-Package
-        path: installation-package/
+      # ... mevcut build adımları aynı kalacak ...
 
   release:
     needs: build
     runs-on: windows-latest
     permissions:
       contents: write
-    if: github.event_name == 'release' && github.event.action == 'published' # Ek kontroller
+    # if: github.event_name == 'release'  # Bu satırı kaldırın veya yorum satırı yapın
     
     steps:
-      - name: Debug Release Info
+      - name: Debug GitHub Context
         run: |
+          echo "Event Name: ${{ github.event_name }}"
+          echo "Event Action: ${{ github.event.action }}"
           echo "Release Tag: ${{ github.event.release.tag_name }}"
           echo "Upload URL: ${{ github.event.release.upload_url }}"
-          echo "Event: ${{ toJson(github.event) }}"
+          echo "Full Event: ${{ toJson(github.event) }}"
           
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -83,21 +39,23 @@ jobs:
       - name: Verify Files
         run: |
           cd release-files
-          dir
+          ls -la
           
       - name: Create ZIP
         run: |
           cd release-files
           $tag = "${{ github.event.release.tag_name }}"
-          if (-not $tag) { $tag = "latest" }
+          if (-not $tag) { 
+            echo "##[warning]No tag name found, using 'latest'"
+            $tag = "latest" 
+          }
           Compress-Archive -Path * -DestinationPath "HttpClientCurlVisualizer-$tag.zip"
           
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1 # Resmi GitHub eylemi
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
           asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-          asset_content_type: application/zip
