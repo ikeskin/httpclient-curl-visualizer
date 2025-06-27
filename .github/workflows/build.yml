@@ -6,29 +6,77 @@ on:
   pull_request:
     branches: [main, master]
   release:
-    types: [published, created]  # Hem published hem de created event'lerini dinle
+    types: [published, created]  # Hem yayınlanmış hem de oluşturulmuş release'leri dinle
 
 jobs:
   build:
     runs-on: windows-latest
+    
     steps:
-      # ... mevcut build adımları aynı kalacak ...
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+      
+    - name: Restore NuGet packages
+      run: nuget restore HttpClientCurlVisualizer.sln
+      
+    - name: Build Solution (Debug)
+      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Debug /p:Platform="Any CPU"
+      
+    - name: Build Solution (Release)
+      run: msbuild HttpClientCurlVisualizer.sln /p:Configuration=Release /p:Platform="Any CPU"
+      
+    - name: Upload Debug Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: HttpClientCurlVisualizer-Debug
+        path: |
+          **/bin/Debug/**/*.dll
+          **/bin/Debug/**/*.pdb
+          
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: HttpClientCurlVisualizer-Release
+        path: |
+          **/bin/Release/**/*.dll
+          **/bin/Release/**/*.pdb
+          
+    - name: Create Installation Package
+      run: |
+        mkdir -p installation-package
+        cp "HttpClientCurlVisualizer/bin/Release/HttpClientCurlVisualizer.dll" "installation-package/"
+        [ -f "README.md" ] && cp "README.md" "installation-package/" || echo "README.md not found"
+        [ -f "INSTALL.md" ] && cp "INSTALL.md" "installation-package/" || echo "INSTALL.md not found"
+        
+    - name: Upload Installation Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: Installation-Package
+        path: installation-package/
+        retention-days: 7  # Artifact'ların 7 gün saklanmasını sağla
 
   release:
     needs: build
     runs-on: windows-latest
     permissions:
-      contents: write
-    # if: github.event_name == 'release'  # Bu satırı kaldırın veya yorum satırı yapın
+      contents: write  # Release asset yüklemek için gerekli izin
     
     steps:
-      - name: Debug GitHub Context
+      - name: Debug Release Info
         run: |
           echo "Event Name: ${{ github.event_name }}"
           echo "Event Action: ${{ github.event.action }}"
           echo "Release Tag: ${{ github.event.release.tag_name }}"
           echo "Upload URL: ${{ github.event.release.upload_url }}"
-          echo "Full Event: ${{ toJson(github.event) }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Full Event:"
+          echo '${{ toJson(github.event) }}' | jq .
           
       - name: Download Artifact
         uses: actions/download-artifact@v4
@@ -36,20 +84,20 @@ jobs:
           name: Installation-Package
           path: release-files/
 
-      - name: Verify Files
+      - name: Verify Downloaded Files
         run: |
-          cd release-files
-          ls -la
-          
-      - name: Create ZIP
+          echo "Contents of release-files:"
+          ls -la release-files/
+          [ -f "release-files/HttpClientCurlVisualizer.dll" ] || exit 1
+
+      - name: Create ZIP Package
         run: |
-          cd release-files
           $tag = "${{ github.event.release.tag_name }}"
           if (-not $tag) { 
-            echo "##[warning]No tag name found, using 'latest'"
-            $tag = "latest" 
+            $tag = "latest"
+            Write-Host "##[warning]No tag name found, using 'latest'"
           }
-          Compress-Archive -Path * -DestinationPath "HttpClientCurlVisualizer-$tag.zip"
+          Compress-Archive -Path "release-files/*" -DestinationPath "HttpClientCurlVisualizer-$tag.zip"
           
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -57,5 +105,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: release-files/HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
-          asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name }}.zip
+          asset_path: HttpClientCurlVisualizer-${{ github.event.release.tag_name || 'latest' }}.zip
+          asset_name: HttpClientCurlVisualizer-${{ github.event.release.tag_name || 'latest' }}.zip
+          asset_content_type: application/zip
