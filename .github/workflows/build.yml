@@ -48,12 +48,21 @@ jobs:
           **/bin/Release/**/*.pdb
           
     - name: Create Installation Package
+      shell: pwsh
       run: |
-        mkdir -p installation-package
-        cp "HttpClientCurlVisualizer/bin/Release/HttpClientCurlVisualizer.dll" "installation-package/"
-        [ -f "README.md" ] && cp "README.md" "installation-package/" || echo "README.md not found"
-        [ -f "INSTALL.md" ] && cp "INSTALL.md" "installation-package/" || echo "INSTALL.md not found"
-        
+           New-Item -ItemType Directory -Path "installation-package" -Force
+           Copy-Item -Path "HttpClientCurlVisualizer\bin\Release\HttpClientCurlVisualizer.dll" -Destination "installation-package\"
+    
+           if (Test-Path "README.md") {
+            Copy-Item -Path "README.md" -Destination "installation-package\"
+           } else {
+            Write-Host "README.md not found"
+           }
+           if (Test-Path "INSTALL.md") {
+              Copy-Item -Path "INSTALL.md" -Destination "installation-package\"
+           } else {
+            Write-Host "INSTALL.md not found"
+           }
     - name: Upload Installation Package
       uses: actions/upload-artifact@v4
       with:
